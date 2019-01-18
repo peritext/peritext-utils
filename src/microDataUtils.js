@@ -86,21 +86,27 @@ const assembleUri = ( infos = [] ) => {
 };
 
 const baseMap = {
-  'rft.atitle': 'title',
+  // 'dc:title': 'title',
+  // 'dc:btitle': 'title',
   'rft.date': 'date',
   'rft.pages': 'pages',
   'rft.issn': 'ISSN',
   'rft.isbn': 'ISBN',
   'rft_id': 'URL',
   'rft.place': 'address',
-  'rft.pub': 'publisher'
+  'rft.pub': 'publisher',
+  'rft.atitle': 'title',
 };
 
 const journalMap = {
   'rft.atitle': 'title',
   'rft.jtitle': 'journal',
   'rft.volume': 'volume',
-  'rft.issue': 'issue'
+  'rft.issue': 'issue',
+};
+
+const bookMap = {
+  'rft.btitle': 'title',
 };
 
 const chapterMap = {
@@ -123,6 +129,12 @@ const translate = ( data, item, map ) => {
  * @return {string} uri - the uri describing the resource
  */
 export const generateOpenUrl = ( citations = [] ) => {
+
+  /**
+   * Docs : https://groups.niso.org/apps/group_public/download.php/14833/z39_88_2004_r2010.pdf
+   * https://github.com/citation-style-language/schema/blob/master/csl-data.json
+   * https://en.wikipedia.org/wiki/Module_talk:Citation/CS1/COinS
+   */
   if ( !citations.length ) {
     return '';
   }
@@ -130,31 +142,52 @@ export const generateOpenUrl = ( citations = [] ) => {
   let data = [];
   data.push( addPropToCOinSData( 'ctx_ver', 'Z39.88-2004' ) );
   data.push( addPropToCOinSData( 'url_ver', 'Z39.88-2004' ) );
+  // data.push( addPropToCOinSData( 'url_ctx_fmt', 'info:ofi/fmt:kev:mtx:ctx' ) );
+  if (citation.issued && citation.issued['date-parts'] && citation.issued['date-parts'].length) {
+    data.push( addPropToCOinSData( 'rft.date', citation.issued['date-parts'][0] ) );
+  }
 
   if ( citation.author && citation.author.length ) {
     citation.author.forEach( function( author ) {
       const auth = `${author.given } ${ author.family}`;
       data.push( addPropToCOinSData( 'rft.au', auth ) );
+      data.push( addPropToCOinSData( 'dc:creator', auth ) );
     } );
   }
   data = translate( data, citation, baseMap );
-  if ( citation.type === 'journal' || citation.type === 'article' ) {
+  if ( citation.type === 'article' ) {
     data = translate( data, citation, journalMap );
     data.push( addPropToCOinSData( 'rft.genre', 'article' ) );
     data.push( addPropToCOinSData( 'rft_val_fmt', 'info:ofi/fmt:kev:mtx:journal' ) );
   }
-else if ( citation.type === 'proceedings' || citation.type === 'conferencePaper' ) {
-    data = translate( data, citation, journalMap );
-    data.push( addPropToCOinSData( 'rft.genre', 'conference' ) );
+  else if ( citation.type === 'dissertation' ) {
+    data = translate( data, citation, bookMap );
+    // data.push( addPropToCOinSData( 'rft.genre', 'book' ) );
+    data.push( addPropToCOinSData( 'rft_val_fmt', 'info:ofi/fmt:kev:mtx:dissertation' ) );
+  }
+  else if ( citation.type === 'book' ) {
+    data = translate( data, citation, bookMap );
+    data.push( addPropToCOinSData( 'rft.genre', 'book' ) );
     data.push( addPropToCOinSData( 'rft_val_fmt', 'info:ofi/fmt:kev:mtx:book' ) );
   }
-else if ( citation.type === 'chapter' ) {
+  else if ( citation.type === 'proceedings' ) {
+    data = translate( data, citation, journalMap );
+    data.push( addPropToCOinSData( 'rft.genre', 'proceeding' ) );
+    data.push( addPropToCOinSData( 'rft_val_fmt', 'info:ofi/fmt:kev:mtx:journal' ) );
+  } else if ( citation.type === 'conferencePaper') {
+    data = translate( data, citation, journalMap );
+    data.push( addPropToCOinSData( 'rft.genre', 'conference' ) );
+    data.push( addPropToCOinSData( 'rft_val_fmt', 'info:ofi/fmt:kev:mtx:journal' ) );
+  }
+  else if ( citation.type === 'chapter' ) {
     data = translate( data, citation, chapterMap );
     data.push( addPropToCOinSData( 'rft.genre', 'bookitem' ) );
     data.push( addPropToCOinSData( 'rft_val_fmt', 'info:ofi/fmt:kev:mtx:book' ) );
   }
-else {
-    data.push( addPropToCOinSData( 'rft.genre', 'document' ) );
+  else {
+    data.push( addPropToCOinSData( 'rft.genre', 'unknown' ) );
+    data.push( addPropToCOinSData( 'rft_val_fmt', 'info:ofi/fmt:kev:mtx:journal' ) );
   }
+  console.log(citation, assembleUri(data))
   return assembleUri( data );
 };
