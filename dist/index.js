@@ -3,12 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "buildAuthorsIndex", {
-  enumerable: true,
-  get: function () {
-    return _buildAuthorsIndex.default;
-  }
-});
 Object.defineProperty(exports, "buildBibliography", {
   enumerable: true,
   get: function () {
@@ -31,12 +25,6 @@ Object.defineProperty(exports, "buildGlossary", {
   enumerable: true,
   get: function () {
     return _buildGlossary.default;
-  }
-});
-Object.defineProperty(exports, "prepareDynamicParts", {
-  enumerable: true,
-  get: function () {
-    return _prepareDynamicParts.default;
   }
 });
 Object.defineProperty(exports, "resourceToCslJSON", {
@@ -106,8 +94,6 @@ Object.defineProperty(exports, "bibToSchema", {
   }
 });
 
-var _buildAuthorsIndex = _interopRequireDefault(require("./buildAuthorsIndex"));
-
 var _buildBibliography = _interopRequireDefault(require("./buildBibliography"));
 
 var _buildCitations = _interopRequireDefault(require("./buildCitations"));
@@ -115,8 +101,6 @@ var _buildCitations = _interopRequireDefault(require("./buildCitations"));
 var _buildContextContent = _interopRequireDefault(require("./buildContextContent"));
 
 var _buildGlossary = _interopRequireDefault(require("./buildGlossary"));
-
-var _prepareDynamicParts = _interopRequireDefault(require("./prepareDynamicParts"));
 
 var _resourceToCslJSON = _interopRequireDefault(require("./resourceToCslJSON"));
 

@@ -1,11 +1,19 @@
 {
   "name": "peritext-utils",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "reusable utilities for the peritext ecosystem",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rm -rf dist; mkdir dist; babel src -d dist"
+    "build": "rm -rf dist; mkdir dist; babel src -d dist",
+    "lint": "eslint src",
+    "addbuild": "git add dist",
+    "lint:fix": "eslint src --fix"
   },
+  "pre-commit": [
+    "lint",
+    "build",
+    "addbuild"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/peritext/peritext-utils.git"
@@ -38,10 +46,15 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/preset-env": "^7.2.3",
     "@babel/preset-react": "^7.0.0",
+    "@robindemourat/eslint-config": "git+https://github.com/robindemourat/eslint-config.git",
     "babel-eslint": "^9.0.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "lodash": "^4.17",
-    "peritext-schemas": "^0.1.0",
+    "peritext-schemas": "^0.1.2",
+    "eslint": "^4.19.1",
+    "eslint-plugin-mocha": "^5.2.0",
+    "pre-commit": "^1.2.2",
+    "eslint-plugin-react": "^7.5.1",
     "react": "^16.7.0-alpha",
     "react-dom": "^16.7.0-alpha"
   },

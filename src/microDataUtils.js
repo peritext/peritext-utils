@@ -86,8 +86,11 @@ const assembleUri = ( infos = [] ) => {
 };
 
 const baseMap = {
-  // 'dc:title': 'title',
-  // 'dc:btitle': 'title',
+
+  /*
+   * 'dc:title': 'title',
+   * 'dc:btitle': 'title',
+   */
   'rft.date': 'date',
   'rft.pages': 'pages',
   'rft.issn': 'ISSN',
@@ -143,7 +146,7 @@ export const generateOpenUrl = ( citations = [] ) => {
   data.push( addPropToCOinSData( 'ctx_ver', 'Z39.88-2004' ) );
   data.push( addPropToCOinSData( 'url_ver', 'Z39.88-2004' ) );
   // data.push( addPropToCOinSData( 'url_ctx_fmt', 'info:ofi/fmt:kev:mtx:ctx' ) );
-  if (citation.issued && citation.issued['date-parts'] && citation.issued['date-parts'].length) {
+  if ( citation.issued && citation.issued['date-parts'] && citation.issued['date-parts'].length ) {
     data.push( addPropToCOinSData( 'rft.date', citation.issued['date-parts'][0] ) );
   }
 
@@ -174,7 +177,8 @@ export const generateOpenUrl = ( citations = [] ) => {
     data = translate( data, citation, journalMap );
     data.push( addPropToCOinSData( 'rft.genre', 'proceeding' ) );
     data.push( addPropToCOinSData( 'rft_val_fmt', 'info:ofi/fmt:kev:mtx:journal' ) );
-  } else if ( citation.type === 'conferencePaper') {
+  }
+ else if ( citation.type === 'conferencePaper' ) {
     data = translate( data, citation, journalMap );
     data.push( addPropToCOinSData( 'rft.genre', 'conference' ) );
     data.push( addPropToCOinSData( 'rft_val_fmt', 'info:ofi/fmt:kev:mtx:journal' ) );
@@ -188,6 +192,5 @@ export const generateOpenUrl = ( citations = [] ) => {
     data.push( addPropToCOinSData( 'rft.genre', 'unknown' ) );
     data.push( addPropToCOinSData( 'rft_val_fmt', 'info:ofi/fmt:kev:mtx:journal' ) );
   }
-  console.log(citation, assembleUri(data))
   return assembleUri( data );
 };
