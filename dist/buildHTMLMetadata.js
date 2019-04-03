@@ -7,7 +7,13 @@ exports.default = void 0;
 
 const buildHTMLMetadata = (production = {
   metadata: {}
-}) => {
+}, edition = {}) => {
+  const {
+    data = []
+  } = edition;
+  const {
+    allowAnnotation = false
+  } = data;
   const title = production.metadata.title ? `
     <title>${production.metadata.title}</title>
     <meta name="DC.Title" content="${production.metadata.title}"/>
@@ -36,6 +42,7 @@ const buildHTMLMetadata = (production = {
   ${title}
   ${authors}
   ${description}
+  ${allowAnnotation ? '<script src="https://hypothes.is/embed.js" async></script>' : ''}
 `;
 };
 

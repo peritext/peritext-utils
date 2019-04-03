@@ -1,5 +1,7 @@
 
-const buildHTMLMetadata = ( production = { metadata: {} } ) => {
+const buildHTMLMetadata = ( production = { metadata: {} }, edition = {} ) => {
+  const { data = [] } = edition;
+  const { allowAnnotation = false } = data;
   const title = production.metadata.title ? `
     <title>${production.metadata.title}</title>
     <meta name="DC.Title" content="${production.metadata.title}"/>
@@ -31,6 +33,7 @@ const buildHTMLMetadata = ( production = { metadata: {} } ) => {
   ${title}
   ${authors}
   ${description}
+  ${allowAnnotation ? '<script src="https://hypothes.is/embed.js" async></script>' : ''}
 `;
 };
 
