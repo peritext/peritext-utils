@@ -1,6 +1,6 @@
 {
   "name": "peritext-utils",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "reusable utilities for the peritext ecosystem",
   "main": "dist/index.js",
   "scripts": {
