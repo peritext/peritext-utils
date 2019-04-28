@@ -29,7 +29,10 @@ const loadAssetsForEdition = ({
   }, []));
   const assets = {};
   assetsIds.reduce((cur, assetId) => cur.then(() => new Promise((res1, rej1) => {
-    requestAssetData(production.id, production.assets[assetId]).then(data => {
+    requestAssetData({
+      productionId: production.id,
+      asset: production.assets[assetId]
+    }).then(data => {
       assets[assetId] = _objectSpread({}, production.assets[assetId], {
         data
       });

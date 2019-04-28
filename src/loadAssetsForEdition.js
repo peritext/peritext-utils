@@ -16,7 +16,7 @@ const loadAssetsForEdition = ( {
   assetsIds.reduce( ( cur, assetId ) =>
     cur.then( () =>
       new Promise( ( res1, rej1 ) => {
-        requestAssetData( production.id, production.assets[assetId] )
+        requestAssetData( { productionId: production.id, asset: production.assets[assetId] } )
           .then( ( data ) => {
             assets[assetId] = {
               ...production.assets[assetId],
