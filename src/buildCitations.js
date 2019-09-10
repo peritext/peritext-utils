@@ -7,13 +7,53 @@ const {
   }
 } = constants;
 
+
+const getContextualizationsFromEdition = ({production = {}, edition = {}}) => {
+  const { contextualizations = {} } = production;
+  const { data = {} } = edition;
+  const { plan = {} } = data;
+  const { summary = [] } = plan;
+  const usedSectionsIds = summary.reduce( ( res, element ) => {
+        if ( element.type === 'sections' ) {
+          let newOnes = [];
+          if ( element.data && element.data.customSummary && element.data.customSummary.active ) {
+            newOnes = element.data.customSummary.summary.map( ( el ) => ( {
+              sectionId: el.id,
+              containerId: element.id
+            } ) );
+          }
+          else {
+            newOnes = production.sectionsOrder.map( ( sectionId ) => ( {
+              sectionId,
+              containerId: element.id
+            } ) );
+          }
+          return [ ...res, ...newOnes ];
+        }
+        return res;
+      }, [] );
+
+  const usedContextualizations = usedSectionsIds.reduce( ( res, section ) => {
+    const relatedContextualizationIds = Object.keys( contextualizations )
+      .filter( ( contextualizationId ) => {
+        return contextualizations[contextualizationId].sectionId === section.sectionId;
+      } );
+
+    return relatedContextualizationIds.reduce((res2, contId) => ({
+      ...res2,
+      [contId]: contextualizations[contId]
+    }), res)
+  }, {} );
+
+  return usedContextualizations;
+}
 /**
  * Builds component-consumable data to represent
  * the citations of "bib" resources being mentionned in the production
  * @param {object} production - the production to process
  * @return {object} citationData - the citation data to input in the reference manager
  */
-export default function buildCitations ( production, sectionId ) {
+export default function buildCitations ( { production, sectionId, edition } ) {
   const {
     contextualizations = {},
     contextualizers = {},
@@ -23,7 +63,10 @@ export default function buildCitations ( production, sectionId ) {
   /*
    * Assets preparation
    */
-  const assets = Object.keys( contextualizations )
+  const actualContextualizations = edition ? 
+    getContextualizationsFromEdition({production, edition})
+    : contextualizations;
+  const assets = Object.keys( actualContextualizations )
   .filter( ( id ) => {
     if ( sectionId ) {
       return contextualizations[id].sectionId === sectionId;
@@ -38,6 +81,9 @@ export default function buildCitations ( production, sectionId ) {
       [id]: {
         ...contextualization,
         resource: resources[contextualization.resourceId],
+        additionalResources: contextualization.additionalResources ?
+          contextualization.additionalResources.map( resId => resources[resId] )
+        : [],
         contextualizer,
         type: contextualizer ? contextualizer.type : INLINE_ASSET
       }
@@ -58,7 +104,10 @@ export default function buildCitations ( production, sectionId ) {
     .filter( ( key ) => assets[key] && assets[key].resource && assets[key].resource.metadata.type !== 'glossary' )
     .reduce( ( finalCitations, key1 ) => {
       const asset = assets[key1];
-      const citations = resourceToCslJSON( asset.resource );
+      const citations = [
+        ...resourceToCslJSON( asset.resource ),
+        ...(asset.additionalResources ? asset.additionalResources.map(res => resourceToCslJSON( res )) : [])
+      ].flat();
       // const citations = bibCit.resource.data;
       const newCitations = citations.reduce( ( final2, citation ) => {
           return {
@@ -79,9 +128,13 @@ export default function buildCitations ( production, sectionId ) {
 
       const contextualizer = contextualizers[contextualization.contextualizerId];
       const resource = resources[contextualization.resourceId];
+      const targets = [
+        ...resourceToCslJSON( bibCit.resource ),
+        ...(bibCit.additionalResources ? bibCit.additionalResources.map(res => resourceToCslJSON( res )) : [])
+      ].flat();
       return {
         citationID: key1,
-        citationItems: resourceToCslJSON( resource ).map( ( ref ) => ( {
+        citationItems: targets.map( ( ref ) => ( {
           locator: contextualizer.locator,
           prefix: contextualizer.prefix,
           suffix: contextualizer.suffix,
