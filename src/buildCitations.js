@@ -7,8 +7,7 @@ const {
   }
 } = constants;
 
-
-const getContextualizationsFromEdition = ({production = {}, edition = {}}) => {
+const getContextualizationsFromEdition = ( { production = {}, edition = {} } ) => {
   const { contextualizations = {} } = production;
   const { data = {} } = edition;
   const { plan = {} } = data;
@@ -39,14 +38,15 @@ const getContextualizationsFromEdition = ({production = {}, edition = {}}) => {
         return contextualizations[contextualizationId].sectionId === section.sectionId;
       } );
 
-    return relatedContextualizationIds.reduce((res2, contId) => ({
+    return relatedContextualizationIds.reduce( ( res2, contId ) => ( {
       ...res2,
       [contId]: contextualizations[contId]
-    }), res)
+    } ), res );
   }, {} );
 
   return usedContextualizations;
-}
+};
+
 /**
  * Builds component-consumable data to represent
  * the citations of "bib" resources being mentionned in the production
@@ -63,8 +63,8 @@ export default function buildCitations ( { production, sectionId, edition } ) {
   /*
    * Assets preparation
    */
-  const actualContextualizations = edition ? 
-    getContextualizationsFromEdition({production, edition})
+  const actualContextualizations = edition ?
+    getContextualizationsFromEdition( { production, edition } )
     : contextualizations;
   const assets = Object.keys( actualContextualizations )
   .filter( ( id ) => {
@@ -82,7 +82,7 @@ export default function buildCitations ( { production, sectionId, edition } ) {
         ...contextualization,
         resource: resources[contextualization.resourceId],
         additionalResources: contextualization.additionalResources ?
-          contextualization.additionalResources.map( resId => resources[resId] )
+          contextualization.additionalResources.map( ( resId ) => resources[resId] )
         : [],
         contextualizer,
         type: contextualizer ? contextualizer.type : INLINE_ASSET
@@ -106,7 +106,7 @@ export default function buildCitations ( { production, sectionId, edition } ) {
       const asset = assets[key1];
       const citations = [
         ...resourceToCslJSON( asset.resource ),
-        ...(asset.additionalResources ? asset.additionalResources.map(res => resourceToCslJSON( res )) : [])
+        ...( asset.additionalResources ? asset.additionalResources.map( ( res ) => resourceToCslJSON( res ) ) : [] )
       ].flat();
       // const citations = bibCit.resource.data;
       const newCitations = citations.reduce( ( final2, citation ) => {
@@ -127,10 +127,9 @@ export default function buildCitations ( { production, sectionId, edition } ) {
       const contextualization = contextualizations[key1];
 
       const contextualizer = contextualizers[contextualization.contextualizerId];
-      const resource = resources[contextualization.resourceId];
       const targets = [
         ...resourceToCslJSON( bibCit.resource ),
-        ...(bibCit.additionalResources ? bibCit.additionalResources.map(res => resourceToCslJSON( res )) : [])
+        ...( bibCit.additionalResources ? bibCit.additionalResources.map( ( res ) => resourceToCslJSON( res ) ) : [] )
       ].flat();
       return {
         citationID: key1,
