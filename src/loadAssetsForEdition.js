@@ -9,7 +9,7 @@ const loadAssetsForEdition = ( {
 } ) => new Promise( ( resolve, reject ) => {
   const items = getContextualizationsFromEdition( production, edition );
   const assetsIds = uniq( items.reduce( ( res, item ) => {
-    const related = getRelatedAssetsIds( production.resources[item.contextualization.resourceId] );
+    const related = getRelatedAssetsIds( production.resources[item.contextualization.sourceId] );
     return [ ...res, ...related ];
   }, [] ) );
   const assets = {};

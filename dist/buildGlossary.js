@@ -31,13 +31,13 @@ function buildGlossary(production) {
     return contextualizer && contextualizer.type === 'glossary';
   }).map(contextualizationId => _objectSpread({}, contextualizations[contextualizationId], {
     contextualizer: contextualizers[contextualizations[contextualizationId].contextualizerId],
-    resource: resources[contextualizations[contextualizationId].resourceId],
+    resource: resources[contextualizations[contextualizationId].sourceId],
     contextContent: (0, _buildContextContent.default)(production, contextualizationId)
   })).reduce((entries, contextualization) => {
     return _objectSpread({}, entries, {
-      [contextualization.resourceId]: {
+      [contextualization.sourceId]: {
         resource: contextualization.resource,
-        mentions: entries[contextualization.resourceId] ? entries[contextualization.resourceId].mentions.concat(contextualization) : [contextualization]
+        mentions: entries[contextualization.sourceId] ? entries[contextualization.sourceId].mentions.concat(contextualization) : [contextualization]
       }
     });
   }, {});

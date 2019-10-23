@@ -39,7 +39,7 @@ export default function buildBibliography (
       ...ass,
       [id]: {
         ...contextualization,
-        resource: resources[contextualization.resourceId],
+        resource: resources[contextualization.sourceId],
         contextualizer,
         type: contextualizer ? contextualizer.type : INLINE_ASSET
       }

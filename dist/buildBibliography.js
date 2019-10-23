@@ -47,7 +47,7 @@ function buildBibliography(production, citations) {
     const contextualizer = contextualizers[contextualization.contextualizerId];
     return _objectSpread({}, ass, {
       [id]: _objectSpread({}, contextualization, {
-        resource: resources[contextualization.resourceId],
+        resource: resources[contextualization.sourceId],
         contextualizer,
         type: contextualizer ? contextualizer.type : INLINE_ASSET
       })

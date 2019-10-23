@@ -24,7 +24,7 @@ const loadAssetsForEdition = ({
 }) => new Promise((resolve, reject) => {
   const items = (0, _getContextualizationsFromEdition.default)(production, edition);
   const assetsIds = (0, _lodash.uniq)(items.reduce((res, item) => {
-    const related = (0, _getRelatedAssetsIds.default)(production.resources[item.contextualization.resourceId]);
+    const related = (0, _getRelatedAssetsIds.default)(production.resources[item.contextualization.sourceId]);
     return [...res, ...related];
   }, []));
   const assets = {};

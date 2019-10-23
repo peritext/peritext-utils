@@ -23,16 +23,16 @@ export default function buildGlossary(
       .map( ( contextualizationId ) => ( {
         ...contextualizations[contextualizationId],
         contextualizer: contextualizers[contextualizations[contextualizationId].contextualizerId],
-        resource: resources[contextualizations[contextualizationId].resourceId],
+        resource: resources[contextualizations[contextualizationId].sourceId],
         contextContent: buildContextContent( production, contextualizationId )
       } ) )
       .reduce( ( entries, contextualization ) => {
         return {
           ...entries,
-          [contextualization.resourceId]: {
+          [contextualization.sourceId]: {
             resource: contextualization.resource,
-            mentions: entries[contextualization.resourceId] ?
-                        entries[contextualization.resourceId].mentions.concat( contextualization )
+            mentions: entries[contextualization.sourceId] ?
+                        entries[contextualization.sourceId].mentions.concat( contextualization )
                         : [ contextualization ]
           }
         };
