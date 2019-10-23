@@ -81,8 +81,8 @@ export default function buildCitations ( { production, sectionId, edition } ) {
       [id]: {
         ...contextualization,
         resource: resources[contextualization.sourceId],
-        additionalResources: contextualization.additionalResources ?
-          contextualization.additionalResources.map( ( resId ) => resources[resId] )
+        additionalSources: contextualization.additionalSources ?
+          contextualization.additionalSources.map( ( resId ) => resources[resId] )
         : [],
         contextualizer,
         type: contextualizer ? contextualizer.type : INLINE_ASSET
@@ -106,7 +106,7 @@ export default function buildCitations ( { production, sectionId, edition } ) {
       const asset = assets[key1];
       const citations = [
         ...resourceToCslJSON( asset.resource ),
-        ...( asset.additionalResources ? asset.additionalResources.map( ( res ) => resourceToCslJSON( res ) ) : [] )
+        ...( asset.additionalSources ? asset.additionalSources.map( ( res ) => resourceToCslJSON( res ) ) : [] )
       ].flat();
       // const citations = bibCit.resource.data;
       const newCitations = citations.reduce( ( final2, citation ) => {
@@ -129,7 +129,7 @@ export default function buildCitations ( { production, sectionId, edition } ) {
       const contextualizer = contextualizers[contextualization.contextualizerId];
       const targets = [
         ...resourceToCslJSON( bibCit.resource ),
-        ...( bibCit.additionalResources ? bibCit.additionalResources.map( ( res ) => resourceToCslJSON( res ) ) : [] )
+        ...( bibCit.additionalSources ? bibCit.additionalSources.map( ( res ) => resourceToCslJSON( res ) ) : [] )
       ].flat();
       return {
         citationID: key1,

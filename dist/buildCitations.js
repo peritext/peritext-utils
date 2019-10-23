@@ -110,7 +110,7 @@ function buildCitations({
     return _objectSpread({}, ass, {
       [id]: _objectSpread({}, contextualization, {
         resource: resources[contextualization.sourceId],
-        additionalResources: contextualization.additionalResources ? contextualization.additionalResources.map(resId => resources[resId]) : [],
+        additionalSources: contextualization.additionalSources ? contextualization.additionalSources.map(resId => resources[resId]) : [],
         contextualizer,
         type: contextualizer ? contextualizer.type : INLINE_ASSET
       })
@@ -125,7 +125,7 @@ function buildCitations({
 
   const citationItems = Object.keys(assets).filter(key => assets[key] && assets[key].resource && assets[key].resource.metadata.type !== 'glossary').reduce((finalCitations, key1) => {
     const asset = assets[key1];
-    const citations = [...(0, _resourceToCslJSON.default)(asset.resource), ...(asset.additionalResources ? asset.additionalResources.map(res => (0, _resourceToCslJSON.default)(res)) : [])].flat(); // const citations = bibCit.resource.data;
+    const citations = [...(0, _resourceToCslJSON.default)(asset.resource), ...(asset.additionalSources ? asset.additionalSources.map(res => (0, _resourceToCslJSON.default)(res)) : [])].flat(); // const citations = bibCit.resource.data;
 
     const newCitations = citations.reduce((final2, citation) => {
       return _objectSpread({}, final2, {
@@ -140,7 +140,7 @@ function buildCitations({
     const key1 = bibCit.id;
     const contextualization = contextualizations[key1];
     const contextualizer = contextualizers[contextualization.contextualizerId];
-    const targets = [...(0, _resourceToCslJSON.default)(bibCit.resource), ...(bibCit.additionalResources ? bibCit.additionalResources.map(res => (0, _resourceToCslJSON.default)(res)) : [])].flat();
+    const targets = [...(0, _resourceToCslJSON.default)(bibCit.resource), ...(bibCit.additionalSources ? bibCit.additionalSources.map(res => (0, _resourceToCslJSON.default)(res)) : [])].flat();
     return {
       citationID: key1,
       citationItems: targets.map(ref => ({

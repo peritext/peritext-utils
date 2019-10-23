@@ -48,7 +48,7 @@ function findRelatedEntity(contents, contextualizationId) {
 
 function buildContextContent(production, contextualizationId, padding = 0) {
   const contextualization = production.contextualizations[contextualizationId];
-  const section = production.sections[contextualization.sectionId];
+  const section = production.resources[contextualization.targetId];
 
   if (section === undefined || section.metadata === undefined) {
     return;
@@ -64,14 +64,14 @@ function buildContextContent(production, contextualizationId, padding = 0) {
   let entityId;
   let targetContents; // search in main contents
 
-  entityId = findRelatedEntity(section.contents, contextualizationId);
+  entityId = findRelatedEntity(section.data.contents.contents, contextualizationId);
 
   if (entityId) {
     targetContents = 'main';
   } // search in notes
   else {
-      Object.keys(section.notes).some(noteId => {
-        const noteContents = section.notes[noteId].contents;
+      Object.keys(section.data.contents.notes).some(noteId => {
+        const noteContents = section.data.contents.notes[noteId].contents;
         entityId = findRelatedEntity(noteContents, contextualizationId);
 
         if (entityId) {
@@ -81,7 +81,7 @@ function buildContextContent(production, contextualizationId, padding = 0) {
       });
     }
 
-  let contents = targetContents === 'main' ? _objectSpread({}, section.contents) : _objectSpread({}, section.notes[targetContents] ? section.notes[targetContents].contents : {});
+  let contents = targetContents === 'main' ? _objectSpread({}, section.data.contents.contents) : _objectSpread({}, section.data.contents.notes[targetContents] ? section.data.contents.notes[targetContents].contents : {});
 
   if (entityId) {
     let blockIndex;
