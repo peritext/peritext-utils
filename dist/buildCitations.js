@@ -42,13 +42,17 @@ const getContextualizationsFromEdition = ({
       let newOnes = [];
 
       if (element.data && element.data.customSummary && element.data.customSummary.active) {
-        newOnes = element.data.customSummary.summary.map(el => ({
-          sectionId: el.id,
+        newOnes = element.data.customSummary.summary.map(({
+          resourceId
+        }) => ({
+          resourceId,
           containerId: element.id
         }));
       } else {
-        newOnes = production.sectionsOrder.map(sectionId => ({
-          sectionId,
+        newOnes = production.sectionsOrder.map(({
+          resourceId
+        }) => ({
+          resourceId,
           containerId: element.id
         }));
       }
@@ -60,7 +64,7 @@ const getContextualizationsFromEdition = ({
   }, []);
   const usedContextualizations = usedSectionsIds.reduce((res, section) => {
     const relatedContextualizationIds = Object.keys(contextualizations).filter(contextualizationId => {
-      return contextualizations[contextualizationId].sectionId === section.sectionId;
+      return contextualizations[contextualizationId].targetId === section.resourceId;
     });
     return relatedContextualizationIds.reduce((res2, contId) => _objectSpread({}, res2, {
       [contId]: contextualizations[contId]
@@ -96,7 +100,7 @@ function buildCitations({
   }) : contextualizations;
   const assets = Object.keys(actualContextualizations).filter(id => {
     if (sectionId) {
-      return contextualizations[id].sectionId === sectionId;
+      return contextualizations[id].targetId === sectionId;
     }
 
     return true;
@@ -105,7 +109,7 @@ function buildCitations({
     const contextualizer = contextualizers[contextualization.contextualizerId];
     return _objectSpread({}, ass, {
       [id]: _objectSpread({}, contextualization, {
-        resource: resources[contextualization.resourceId],
+        resource: resources[contextualization.sourceId],
         additionalResources: contextualization.additionalResources ? contextualization.additionalResources.map(resId => resources[resId]) : [],
         contextualizer,
         type: contextualizer ? contextualizer.type : INLINE_ASSET

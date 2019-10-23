@@ -15,7 +15,7 @@ export default function resourceToCslJSON ( resource ) {
   const { type } = metadata;
   let cslType;
   if ( type === 'bib' ) {
-    if ( Array.isArray( resource.data.citations ) ) {
+    if ( Array.isArray( data.citations ) ) {
       return resource.data.citations;
 
       /**
@@ -23,7 +23,10 @@ export default function resourceToCslJSON ( resource ) {
        * (bib data being a map instead of an array)
        */
     }
-    else return [ resource.data.citations[Object.keys( resource.data.citations )[0]] ];
+    else if ( data.citations ) {
+      return [ data.citations[Object.keys( data.citations )[0]] ];
+    }
+ else return [];
   }
   switch ( type ) {
     case 'video':
