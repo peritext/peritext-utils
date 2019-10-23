@@ -25,13 +25,13 @@ function resourceToCslJSON(resource) {
   let cslType;
 
   if (type === 'bib') {
-    if (Array.isArray(resource.data)) {
-      return resource.data;
+    if (Array.isArray(resource.data.citations)) {
+      return resource.data.citations;
       /**
        * @todo I had to do that, investigate where it comes from
        * (bib data being a map instead of an array)
        */
-    } else return [resource.data[Object.keys(resource.data)[0]]];
+    } else return [resource.data.citations[Object.keys(resource.data.citations)[0]]];
   }
 
   switch (type) {
