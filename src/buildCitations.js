@@ -29,7 +29,8 @@ const getContextualizationsFromEdition = ( { production = {}, edition = {} } ) =
             } ) );
           }
           return [ ...res, ...newOnes ];
-        } else if ( element.type === 'resourceSections' ) {
+        }
+ else if ( element.type === 'resourceSections' ) {
           let newOnes = [];
           if ( element.data && element.data.customSummary && element.data.customSummary.active ) {
             newOnes = element.data.customSummary.summary.map( ( { resourceId } ) => ( {
@@ -39,14 +40,14 @@ const getContextualizationsFromEdition = ( { production = {}, edition = {} } ) =
           }
           else {
             newOnes = Object.keys( production.resources )
-            .filter( (resourceId) => {
+            .filter( ( resourceId ) => {
               const resource = production.resources[resourceId];
               return element.data.resourceTypes.includes( resource.metadata.type ) && resourceHasContents( resource );
             } )
-            .map(resourceId => ({
+            .map( ( resourceId ) => ( {
               resourceId,
               containerId: element.id
-            }))
+            } ) );
           }
           return [ ...res, ...newOnes ];
         }
@@ -110,6 +111,7 @@ export default function buildCitations ( { production, sectionId, edition } ) {
       }
     };
   }, {} );
+
   /*
    * Citations preparation
    */

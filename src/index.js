@@ -3,11 +3,14 @@ export { default as buildCitations } from './buildCitations';
 export { default as buildContextContent } from './buildContextContent';
 export { default as buildGlossary } from './buildGlossary';
 export { default as resourceHasContents } from './resourceHasContents';
+export { default as getResourceTitle } from './getResourceTitle';
 
 export { default as resourceToCslJSON } from './resourceToCslJSON';
 export { default as StructuredCOinS } from './StructuredCOinS';
 export { default as chooseAppropriateAsset } from './chooseAppropriateAsset';
 export { default as getRelatedAssetsIds } from './getRelatedAssetsIds';
+export { default as defaultSortResourceSections } from './defaultSortResourceSections';
+export { default as getContextualizationMentions } from './getContextualizationMentions';
 export { chooseAppropriateSubAsset } from './chooseAppropriateAsset';
 
 export { default as getContextualizationsFromEdition } from './getContextualizationsFromEdition';

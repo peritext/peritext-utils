@@ -9,6 +9,8 @@ var _resourceToCslJSON = _interopRequireDefault(require("./resourceToCslJSON"));
 
 var _peritextSchemas = require("peritext-schemas");
 
+var _resourceHasContents = _interopRequireDefault(require("./resourceHasContents"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
@@ -52,6 +54,27 @@ const getContextualizationsFromEdition = ({
         newOnes = production.sectionsOrder.map(({
           resourceId
         }) => ({
+          resourceId,
+          containerId: element.id
+        }));
+      }
+
+      return [...res, ...newOnes];
+    } else if (element.type === 'resourceSections') {
+      let newOnes = [];
+
+      if (element.data && element.data.customSummary && element.data.customSummary.active) {
+        newOnes = element.data.customSummary.summary.map(({
+          resourceId
+        }) => ({
+          resourceId,
+          containerId: element.id
+        }));
+      } else {
+        newOnes = Object.keys(production.resources).filter(resourceId => {
+          const resource = production.resources[resourceId];
+          return element.data.resourceTypes.includes(resource.metadata.type) && (0, _resourceHasContents.default)(resource);
+        }).map(resourceId => ({
           resourceId,
           containerId: element.id
         }));

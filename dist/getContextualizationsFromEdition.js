@@ -5,10 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = getContextualizationsFromEdition;
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 /**
  * Get mentioned contextualizations for the sections of a given edition
  * @return {array} elements - list of loaded contextualizations
@@ -50,14 +46,25 @@ function getContextualizationsFromEdition(production = {}, edition = {}) {
 
     return res;
   }, []);
-  const usedContextualizations = usedSectionsIds.reduce((res, section) => {
+  const contextualizationsUsedBySections = usedSectionsIds.reduce((res, section) => {
     const relatedContextualizationIds = Object.keys(contextualizations).filter(contextualizationId => {
       return contextualizations[contextualizationId].targetId === section.resourceId;
     });
-    return [...res, ...relatedContextualizationIds.map(contextualizationId => _objectSpread({
+    return [...res, ...relatedContextualizationIds.map(contextualizationId => ({
       contextualization: contextualizations[contextualizationId],
-      contextualizer: contextualizers[contextualizations[contextualizationId].contextualizerId]
-    }, section))];
+      contextualizer: contextualizers[contextualizations[contextualizationId].contextualizerId] // ...section,
+
+    }))];
   }, []);
-  return usedContextualizations;
+  /**
+   * @todo decide if resources-based contextualizations should somehow restrict the resources to parse relating to the edition summary
+   */
+
+  const contextualizationsUsedByResources = Object.keys(contextualizations).filter(contextualizationId => {
+    return production.resources[contextualizations[contextualizationId].targetId] && production.resources[contextualizations[contextualizationId].targetId].metadata.type !== 'section';
+  }).map(contextualizationId => ({
+    contextualization: contextualizations[contextualizationId],
+    contextualizer: contextualizers[contextualizations[contextualizationId].contextualizerId]
+  }));
+  return [...contextualizationsUsedBySections, ...contextualizationsUsedByResources];
 }

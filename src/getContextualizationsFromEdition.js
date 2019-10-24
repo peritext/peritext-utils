@@ -35,7 +35,7 @@ export default function getContextualizationsFromEdition (
         return res;
       }, [] );
 
-  const usedContextualizations = usedSectionsIds.reduce( ( res, section ) => {
+  const contextualizationsUsedBySections = usedSectionsIds.reduce( ( res, section ) => {
     const relatedContextualizationIds = Object.keys( contextualizations )
       .filter( ( contextualizationId ) => {
         return contextualizations[contextualizationId].targetId === section.resourceId;
@@ -46,10 +46,23 @@ export default function getContextualizationsFromEdition (
       ...relatedContextualizationIds.map( ( contextualizationId ) => ( {
         contextualization: contextualizations[contextualizationId],
         contextualizer: contextualizers[contextualizations[contextualizationId].contextualizerId],
-        ...section,
+        // ...section,
       } ) )
     ];
   }, [] );
 
-  return usedContextualizations;
+  /**
+   * @todo decide if resources-based contextualizations should somehow restrict the resources to parse relating to the edition summary
+   */
+  const contextualizationsUsedByResources = Object.keys( contextualizations )
+  .filter( ( contextualizationId ) => {
+    return production.resources[contextualizations[contextualizationId].targetId]
+    && production.resources[contextualizations[contextualizationId].targetId].metadata.type !== 'section';
+  } )
+  .map( ( contextualizationId ) => ( {
+    contextualization: contextualizations[contextualizationId],
+    contextualizer: contextualizers[contextualizations[contextualizationId].contextualizerId],
+  } ) );
+
+  return [ ...contextualizationsUsedBySections, ...contextualizationsUsedByResources ];
 }

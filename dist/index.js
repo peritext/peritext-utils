@@ -33,6 +33,12 @@ Object.defineProperty(exports, "resourceHasContents", {
     return _resourceHasContents.default;
   }
 });
+Object.defineProperty(exports, "getResourceTitle", {
+  enumerable: true,
+  get: function () {
+    return _getResourceTitle.default;
+  }
+});
 Object.defineProperty(exports, "resourceToCslJSON", {
   enumerable: true,
   get: function () {
@@ -61,6 +67,18 @@ Object.defineProperty(exports, "getRelatedAssetsIds", {
   enumerable: true,
   get: function () {
     return _getRelatedAssetsIds.default;
+  }
+});
+Object.defineProperty(exports, "defaultSortResourceSections", {
+  enumerable: true,
+  get: function () {
+    return _defaultSortResourceSections.default;
+  }
+});
+Object.defineProperty(exports, "getContextualizationMentions", {
+  enumerable: true,
+  get: function () {
+    return _getContextualizationMentions.default;
   }
 });
 Object.defineProperty(exports, "getContextualizationsFromEdition", {
@@ -110,6 +128,8 @@ var _buildGlossary = _interopRequireDefault(require("./buildGlossary"));
 
 var _resourceHasContents = _interopRequireDefault(require("./resourceHasContents"));
 
+var _getResourceTitle = _interopRequireDefault(require("./getResourceTitle"));
+
 var _resourceToCslJSON = _interopRequireDefault(require("./resourceToCslJSON"));
 
 var _StructuredCOinS = _interopRequireDefault(require("./StructuredCOinS"));
@@ -117,6 +137,10 @@ var _StructuredCOinS = _interopRequireDefault(require("./StructuredCOinS"));
 var _chooseAppropriateAsset = _interopRequireWildcard(require("./chooseAppropriateAsset"));
 
 var _getRelatedAssetsIds = _interopRequireDefault(require("./getRelatedAssetsIds"));
+
+var _defaultSortResourceSections = _interopRequireDefault(require("./defaultSortResourceSections"));
+
+var _getContextualizationMentions = _interopRequireDefault(require("./getContextualizationMentions"));
 
 var _getContextualizationsFromEdition = _interopRequireDefault(require("./getContextualizationsFromEdition"));
 
