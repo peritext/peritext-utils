@@ -1,5 +1,6 @@
 import resourceToCslJSON from './resourceToCslJSON';
 import { constants } from 'peritext-schemas';
+import resourceHasContents from './resourceHasContents';
 const {
   draftEntitiesNames: {
 
@@ -26,6 +27,26 @@ const getContextualizationsFromEdition = ( { production = {}, edition = {} } ) =
               resourceId,
               containerId: element.id
             } ) );
+          }
+          return [ ...res, ...newOnes ];
+        } else if ( element.type === 'resourceSections' ) {
+          let newOnes = [];
+          if ( element.data && element.data.customSummary && element.data.customSummary.active ) {
+            newOnes = element.data.customSummary.summary.map( ( { resourceId } ) => ( {
+              resourceId,
+              containerId: element.id
+            } ) );
+          }
+          else {
+            newOnes = Object.keys( production.resources )
+            .filter( (resourceId) => {
+              const resource = production.resources[resourceId];
+              return element.data.resourceTypes.includes( resource.metadata.type ) && resourceHasContents( resource );
+            } )
+            .map(resourceId => ({
+              resourceId,
+              containerId: element.id
+            }))
           }
           return [ ...res, ...newOnes ];
         }
@@ -89,7 +110,6 @@ export default function buildCitations ( { production, sectionId, edition } ) {
       }
     };
   }, {} );
-
   /*
    * Citations preparation
    */
