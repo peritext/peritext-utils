@@ -25,7 +25,7 @@ const {
  */
 
 function findRelatedEntity(contents, contextualizationId) {
-  return Object.keys(contents.entityMap).find(id => {
+  return Object.keys(contents.entityMap || {}).find(id => {
     const entity = contents.entityMap[id];
 
     if (entity.type === BLOCK_ASSET || entity.type === INLINE_ASSET && entity.data.asset) {
@@ -56,6 +56,16 @@ function buildContextContent(production, contextualizationId, padding = 0) {
 
   const sectionTitle = section.metadata.title;
   const sectionId = section.id;
+  const {
+    data = {}
+  } = section;
+  const {
+    contents = {
+      contents: {},
+      notes: {},
+      notesOrder: []
+    }
+  } = data;
   /*
    * look in the entity map of the section
    * for the draft-js entity id linked to the contextualization
@@ -64,14 +74,14 @@ function buildContextContent(production, contextualizationId, padding = 0) {
   let entityId;
   let targetContents; // search in main contents
 
-  entityId = findRelatedEntity(section.data.contents.contents, contextualizationId);
+  entityId = findRelatedEntity(contents.contents, contextualizationId);
 
   if (entityId) {
     targetContents = 'main';
   } // search in notes
   else {
-      Object.keys(section.data.contents.notes).some(noteId => {
-        const noteContents = section.data.contents.notes[noteId].contents;
+      Object.keys(contents.notes).some(noteId => {
+        const noteContents = contents.notes[noteId].contents;
         entityId = findRelatedEntity(noteContents, contextualizationId);
 
         if (entityId) {
@@ -81,11 +91,11 @@ function buildContextContent(production, contextualizationId, padding = 0) {
       });
     }
 
-  let contents = targetContents === 'main' ? _objectSpread({}, section.data.contents.contents) : _objectSpread({}, section.data.contents.notes[targetContents] ? section.data.contents.notes[targetContents].contents : {});
+  let actualContents = targetContents === 'main' ? _objectSpread({}, contents.contents) : _objectSpread({}, contents.notes[targetContents] ? contents.notes[targetContents].contents : {});
 
   if (entityId) {
     let blockIndex;
-    contents.blocks.some((block, index) => {
+    actualContents.blocks.some((block, index) => {
       const entityRanges = block.entityRanges;
       const entityMatch = entityRanges.find(range => {
         if (`${range.key}` === `${entityId}`) {
@@ -99,15 +109,15 @@ function buildContextContent(production, contextualizationId, padding = 0) {
       }
     });
     const sliceFrom = blockIndex - padding >= 0 ? blockIndex - padding : 0;
-    const sliceTo = blockIndex + padding + 1 <= contents.blocks.length - 1 ? blockIndex + padding + 1 : contents.blocks.length;
-    contents = _objectSpread({}, contents, {
-      blocks: [...contents.blocks.slice(sliceFrom, sliceTo)]
+    const sliceTo = blockIndex + padding + 1 <= actualContents.blocks.length - 1 ? blockIndex + padding + 1 : actualContents.blocks.length;
+    actualContents = _objectSpread({}, actualContents, {
+      blocks: [...actualContents.blocks.slice(sliceFrom, sliceTo)]
     });
   }
 
   return {
     targetContents,
-    contents,
+    contents: actualContents,
     sectionTitle,
     sectionId
   };
