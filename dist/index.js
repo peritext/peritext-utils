@@ -39,6 +39,12 @@ Object.defineProperty(exports, "getResourceTitle", {
     return _getResourceTitle.default;
   }
 });
+Object.defineProperty(exports, "buildResourceSectionsSummary", {
+  enumerable: true,
+  get: function () {
+    return _buildResourceSectionsSummary.default;
+  }
+});
 Object.defineProperty(exports, "resourceToCslJSON", {
   enumerable: true,
   get: function () {
@@ -129,6 +135,8 @@ var _buildGlossary = _interopRequireDefault(require("./buildGlossary"));
 var _resourceHasContents = _interopRequireDefault(require("./resourceHasContents"));
 
 var _getResourceTitle = _interopRequireDefault(require("./getResourceTitle"));
+
+var _buildResourceSectionsSummary = _interopRequireDefault(require("./buildResourceSectionsSummary"));
 
 var _resourceToCslJSON = _interopRequireDefault(require("./resourceToCslJSON"));
 

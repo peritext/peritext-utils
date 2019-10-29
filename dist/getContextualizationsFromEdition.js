@@ -5,6 +5,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = getContextualizationsFromEdition;
 
+var _buildResourceSectionsSummary = _interopRequireDefault(require("./buildResourceSectionsSummary"));
+
+var _uuid = require("uuid");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /**
  * Get mentioned contextualizations for the sections of a given edition
  * @return {array} elements - list of loaded contextualizations
@@ -23,6 +29,7 @@ function getContextualizationsFromEdition(production = {}, edition = {}) {
   const {
     summary = []
   } = plan;
+  const additionalResourcesIds = [];
   const usedSectionsIds = summary.reduce((res, element) => {
     if (element.type === 'sections') {
       let newOnes = [];
@@ -41,6 +48,20 @@ function getContextualizationsFromEdition(production = {}, edition = {}) {
         }));
       }
 
+      return [...res, ...newOnes];
+    } else if (element.type === 'resourceSections') {
+      const newOnes = (0, _buildResourceSectionsSummary.default)({
+        production,
+        options: element.data
+      }).map(({
+        resourceId
+      }) => ({
+        containerId: element.id,
+        resourceId
+      }));
+      additionalResourcesIds.push(...newOnes.map(({
+        resourceId
+      }) => resourceId));
       return [...res, ...newOnes];
     }
 
@@ -66,5 +87,22 @@ function getContextualizationsFromEdition(production = {}, edition = {}) {
     contextualization: contextualizations[contextualizationId],
     contextualizer: contextualizers[contextualizations[contextualizationId].contextualizerId]
   }));
-  return [...contextualizationsUsedBySections, ...contextualizationsUsedByResources];
+  return [...contextualizationsUsedBySections, ...contextualizationsUsedByResources, // adding additionnal resources for resources headers
+  ...additionalResourcesIds.map(resourceId => {
+    const resource = production.resources[resourceId];
+    const contextualizerId = (0, _uuid.v4)();
+    return {
+      contextualization: {
+        id: (0, _uuid.v4)(),
+        contextualizerId,
+        sourceId: resourceId,
+        targetId: resourceId
+      },
+      contextualizer: {
+        id: contextualizerId,
+        type: resource.metadata.type,
+        parameters: {}
+      }
+    };
+  })];
 }

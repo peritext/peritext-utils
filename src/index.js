@@ -4,6 +4,7 @@ export { default as buildContextContent } from './buildContextContent';
 export { default as buildGlossary } from './buildGlossary';
 export { default as resourceHasContents } from './resourceHasContents';
 export { default as getResourceTitle } from './getResourceTitle';
+export { default as buildResourceSectionsSummary } from './buildResourceSectionsSummary';
 
 export { default as resourceToCslJSON } from './resourceToCslJSON';
 export { default as StructuredCOinS } from './StructuredCOinS';

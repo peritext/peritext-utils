@@ -1,3 +1,5 @@
+import buildResourceSectionsSummary from './buildResourceSectionsSummary';
+import { v4 as genId } from 'uuid';
 
 /**
  * Get mentioned contextualizations for the sections of a given edition
@@ -15,6 +17,7 @@ export default function getContextualizationsFromEdition (
   const { data = {} } = edition;
   const { plan = {} } = data;
   const { summary = [] } = plan;
+  const additionalResourcesIds = [];
   const usedSectionsIds = summary.reduce( ( res, element ) => {
         if ( element.type === 'sections' ) {
           let newOnes = [];
@@ -30,6 +33,14 @@ export default function getContextualizationsFromEdition (
               containerId: element.id
             } ) );
           }
+          return [ ...res, ...newOnes ];
+        }
+        else if ( element.type === 'resourceSections' ) {
+          const newOnes = buildResourceSectionsSummary( { production, options: element.data } ).map( ( { resourceId } ) => ( {
+            containerId: element.id,
+            resourceId
+          } ) );
+          additionalResourcesIds.push( ...newOnes.map( ( { resourceId } ) => resourceId ) );
           return [ ...res, ...newOnes ];
         }
         return res;
@@ -64,5 +75,26 @@ export default function getContextualizationsFromEdition (
     contextualizer: contextualizers[contextualizations[contextualizationId].contextualizerId],
   } ) );
 
-  return [ ...contextualizationsUsedBySections, ...contextualizationsUsedByResources ];
+  return [
+    ...contextualizationsUsedBySections,
+    ...contextualizationsUsedByResources,
+    // adding additionnal resources for resources headers
+    ...additionalResourcesIds.map( ( resourceId ) => {
+      const resource = production.resources[resourceId];
+      const contextualizerId = genId();
+      return {
+        contextualization: {
+          id: genId(),
+          contextualizerId,
+          sourceId: resourceId,
+          targetId: resourceId
+        },
+        contextualizer: {
+          id: contextualizerId,
+          type: resource.metadata.type,
+          parameters: {}
+        }
+      };
+    } )
+  ];
 }
