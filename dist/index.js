@@ -15,6 +15,12 @@ Object.defineProperty(exports, "buildCitations", {
     return _buildCitations.default;
   }
 });
+Object.defineProperty(exports, "buildCitationRepresentations", {
+  enumerable: true,
+  get: function () {
+    return _buildCitationRepresentations.default;
+  }
+});
 Object.defineProperty(exports, "buildContextContent", {
   enumerable: true,
   get: function () {
@@ -127,6 +133,8 @@ Object.defineProperty(exports, "bibToSchema", {
 var _buildBibliography = _interopRequireDefault(require("./buildBibliography"));
 
 var _buildCitations = _interopRequireDefault(require("./buildCitations"));
+
+var _buildCitationRepresentations = _interopRequireDefault(require("./buildCitationRepresentations"));
 
 var _buildContextContent = _interopRequireDefault(require("./buildContextContent"));
 

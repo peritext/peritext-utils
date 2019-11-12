@@ -1,5 +1,6 @@
 export { default as buildBibliography } from './buildBibliography';
 export { default as buildCitations } from './buildCitations';
+export { default as buildCitationRepresentations } from './buildCitationRepresentations';
 export { default as buildContextContent } from './buildContextContent';
 export { default as buildGlossary } from './buildGlossary';
 export { default as resourceHasContents } from './resourceHasContents';
