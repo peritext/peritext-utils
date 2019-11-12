@@ -27,7 +27,7 @@ const buildResourceSectionsSummary = ({
   } else {
     summary = Object.keys(production.resources).filter(resourceId => {
       const resource = production.resources[resourceId];
-      return resourceTypes.includes(resource.metadata.type);
+      return resourceTypes ? resourceTypes.includes(resource.metadata.type) : true;
     }).filter(resourceId => {
       if (hideEmptyResources) {
         return (0, _resourceHasContents.default)(production.resources[resourceId]);

@@ -13,7 +13,7 @@ const buildResourceSectionsSummary = ( { production, options } ) => {
     summary = Object.keys( production.resources )
     .filter( ( resourceId ) => {
       const resource = production.resources[resourceId];
-      return resourceTypes.includes( resource.metadata.type );
+      return resourceTypes ? resourceTypes.includes( resource.metadata.type ) : true;
     } )
     .filter( ( resourceId ) => {
       if ( hideEmptyResources ) {
