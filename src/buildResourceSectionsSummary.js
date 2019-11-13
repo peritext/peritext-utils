@@ -10,22 +10,31 @@ const buildResourceSectionsSummary = ( { production, options } ) => {
     summary = customSummary.summary;
   }
  else {
+    let base = [];
+    if ( resourceTypes && resourceTypes.includes( 'section' ) ) {
+      base = [ ...production.sectionsOrder ];
+    }
     summary = Object.keys( production.resources )
     .filter( ( resourceId ) => {
       const resource = production.resources[resourceId];
-      return resourceTypes ? resourceTypes.includes( resource.metadata.type ) : true;
-    } )
-    .filter( ( resourceId ) => {
-      if ( hideEmptyResources ) {
-        return resourceHasContents( production.resources[resourceId] );
+      if ( resource.metadata.type === 'section' ) {
+        return false;
       }
-      return true;
+      return resourceTypes ? resourceTypes.includes( resource.metadata.type ) : true;
     } )
     .map( ( resourceId ) => ( {
       resourceId,
       level: 0
     } ) )
     .sort( defaultSortResourceSections );
+
+    summary = [ ...base, ...summary ]
+    .filter( ( resourceId ) => {
+      if ( hideEmptyResources ) {
+        return resourceHasContents( production.resources[resourceId] );
+      }
+      return true;
+    } );
   }
   return summary;
 };

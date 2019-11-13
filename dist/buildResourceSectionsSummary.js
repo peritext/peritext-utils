@@ -25,19 +25,31 @@ const buildResourceSectionsSummary = ({
   if (customSummary && customSummary.active) {
     summary = customSummary.summary;
   } else {
+    let base = [];
+
+    if (resourceTypes && resourceTypes.includes('section')) {
+      base = [...production.sectionsOrder];
+    }
+
     summary = Object.keys(production.resources).filter(resourceId => {
       const resource = production.resources[resourceId];
+
+      if (resource.metadata.type === 'section') {
+        return false;
+      }
+
       return resourceTypes ? resourceTypes.includes(resource.metadata.type) : true;
-    }).filter(resourceId => {
+    }).map(resourceId => ({
+      resourceId,
+      level: 0
+    })).sort(_defaultSortResourceSections.default);
+    summary = [...base, ...summary].filter(resourceId => {
       if (hideEmptyResources) {
         return (0, _resourceHasContents.default)(production.resources[resourceId]);
       }
 
       return true;
-    }).map(resourceId => ({
-      resourceId,
-      level: 0
-    })).sort(_defaultSortResourceSections.default);
+    });
   }
 
   return summary;
