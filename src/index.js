@@ -15,6 +15,8 @@ export { default as defaultSortResourceSections } from './defaultSortResourceSec
 export { default as getContextualizationMentions } from './getContextualizationMentions';
 export { chooseAppropriateSubAsset } from './chooseAppropriateAsset';
 
+export { default as preprocessEditionData } from './preprocessEditionData';
+
 export { default as getContextualizationsFromEdition } from './getContextualizationsFromEdition';
 export { default as loadAssetsForEdition } from './loadAssetsForEdition';
 export { default as buildHTMLMetadata } from './buildHTMLMetadata';

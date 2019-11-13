@@ -2,6 +2,7 @@ import buildContextContent from './buildContextContent';
 import resourceToCslJSON from './resourceToCslJSON';
 import getContextualizationsFromEdition from './getContextualizationsFromEdition';
 import getContextualizationMentions from './getContextualizationMentions';
+import buildCitations from './buildCitations';
 
 import uniq from 'lodash/uniq';
 import CSL from 'citeproc';
@@ -63,7 +64,6 @@ function processBibliography( { items, style, locale, options = {} } ) {
 export default function buildBibliography ( {
   production,
   edition,
-  citations,
   contextualizations: inputContextualizations,
   options: {
     showUncitedReferences,
@@ -138,7 +138,7 @@ export default function buildBibliography ( {
       }
     };
   }, {} );
-
+  const citations = buildCitations( { production, edition } );
   const bibliographyData = processBibliography( {
     locale: edition.data.citationLocale.data,
     style: edition.data.citationStyle.data,

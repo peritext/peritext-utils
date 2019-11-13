@@ -13,6 +13,8 @@ var _getContextualizationsFromEdition = _interopRequireDefault(require("./getCon
 
 var _getContextualizationMentions = _interopRequireDefault(require("./getContextualizationMentions"));
 
+var _buildCitations = _interopRequireDefault(require("./buildCitations"));
+
 var _uniq = _interopRequireDefault(require("lodash/uniq"));
 
 var _citeproc = _interopRequireDefault(require("citeproc"));
@@ -71,7 +73,6 @@ function processBibliography({
 function buildBibliography({
   production,
   edition,
-  citations,
   contextualizations: inputContextualizations,
   options: {
     showUncitedReferences,
@@ -132,6 +133,10 @@ function buildBibliography({
       })
     });
   }, {});
+  const citations = (0, _buildCitations.default)({
+    production,
+    edition
+  });
   const bibliographyData = processBibliography({
     locale: edition.data.citationLocale.data,
     style: edition.data.citationStyle.data,

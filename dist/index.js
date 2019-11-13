@@ -93,6 +93,12 @@ Object.defineProperty(exports, "getContextualizationMentions", {
     return _getContextualizationMentions.default;
   }
 });
+Object.defineProperty(exports, "preprocessEditionData", {
+  enumerable: true,
+  get: function () {
+    return _preprocessEditionData.default;
+  }
+});
 Object.defineProperty(exports, "getContextualizationsFromEdition", {
   enumerable: true,
   get: function () {
@@ -157,6 +163,8 @@ var _getRelatedAssetsIds = _interopRequireDefault(require("./getRelatedAssetsIds
 var _defaultSortResourceSections = _interopRequireDefault(require("./defaultSortResourceSections"));
 
 var _getContextualizationMentions = _interopRequireDefault(require("./getContextualizationMentions"));
+
+var _preprocessEditionData = _interopRequireDefault(require("./preprocessEditionData"));
 
 var _getContextualizationsFromEdition = _interopRequireDefault(require("./getContextualizationsFromEdition"));
 
