@@ -17,8 +17,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 function getContextualizationsFromEdition(production = {}, edition = {}) {
   const {
-    contextualizations,
-    contextualizers
+    contextualizations = {},
+    contextualizers = {}
   } = production;
   const {
     data = {}

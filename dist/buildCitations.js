@@ -7,9 +7,9 @@ exports.default = buildCitations;
 
 var _resourceToCslJSON = _interopRequireDefault(require("./resourceToCslJSON"));
 
-var _peritextSchemas = require("peritext-schemas");
+var _getContextualizationsFromEdition = _interopRequireDefault(require("./getContextualizationsFromEdition"));
 
-var _resourceHasContents = _interopRequireDefault(require("./resourceHasContents"));
+var _buildCitationRepresentations = _interopRequireDefault(require("./buildCitationRepresentations"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17,97 +17,17 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-const {
-  draftEntitiesNames: {
-    INLINE_ASSET
-  }
-} = _peritextSchemas.constants;
-
-const getContextualizationsFromEdition = ({
-  production = {},
-  edition = {}
-}) => {
-  const {
-    contextualizations = {}
-  } = production;
-  const {
-    data = {}
-  } = edition;
-  const {
-    plan = {}
-  } = data;
-  const {
-    summary = []
-  } = plan;
-  const usedSectionsIds = summary.reduce((res, element) => {
-    if (element.type === 'sections') {
-      let newOnes = [];
-
-      if (element.data && element.data.customSummary && element.data.customSummary.active) {
-        newOnes = element.data.customSummary.summary.map(({
-          resourceId
-        }) => ({
-          resourceId,
-          containerId: element.id
-        }));
-      } else {
-        newOnes = production.sectionsOrder.map(({
-          resourceId
-        }) => ({
-          resourceId,
-          containerId: element.id
-        }));
-      }
-
-      return [...res, ...newOnes];
-    } else if (element.type === 'resourceSections') {
-      let newOnes = [];
-
-      if (element.data && element.data.customSummary && element.data.customSummary.active) {
-        newOnes = element.data.customSummary.summary.map(({
-          resourceId
-        }) => ({
-          resourceId,
-          containerId: element.id
-        }));
-      } else {
-        newOnes = Object.keys(production.resources).filter(resourceId => {
-          const resource = production.resources[resourceId];
-          return element.data.resourceTypes.includes(resource.metadata.type) && (0, _resourceHasContents.default)(resource);
-        }).map(resourceId => ({
-          resourceId,
-          containerId: element.id
-        }));
-      }
-
-      return [...res, ...newOnes];
-    }
-
-    return res;
-  }, []);
-  const usedContextualizations = usedSectionsIds.reduce((res, section) => {
-    const relatedContextualizationIds = Object.keys(contextualizations).filter(contextualizationId => {
-      return contextualizations[contextualizationId].targetId === section.resourceId;
-    });
-    return relatedContextualizationIds.reduce((res2, contId) => _objectSpread({}, res2, {
-      [contId]: contextualizations[contId]
-    }), res);
-  }, {});
-  return usedContextualizations;
-};
 /**
  * Builds component-consumable data to represent
  * the citations of "bib" resources being mentionned in the production
  * @param {object} production - the production to process
  * @return {object} citationData - the citation data to input in the reference manager
  */
-
-
 function buildCitations({
   production,
   sectionId,
   edition
-}) {
+}, buildRepresentations = false) {
   const {
     contextualizations = {},
     contextualizers = {},
@@ -117,25 +37,24 @@ function buildCitations({
    * Assets preparation
    */
 
-  const actualContextualizations = edition ? getContextualizationsFromEdition({
-    production,
-    edition
-  }) : contextualizations;
-  const assets = Object.keys(actualContextualizations).filter(id => {
+  const actualContextualizations = edition ? (0, _getContextualizationsFromEdition.default)(production, edition) : contextualizations;
+  const assets = actualContextualizations.filter(contextualization => {
     if (sectionId) {
-      return contextualizations[id].targetId === sectionId;
+      return contextualization.targetId === sectionId;
     }
 
     return true;
-  }).reduce((ass, id) => {
-    const contextualization = contextualizations[id];
-    const contextualizer = contextualizers[contextualization.contextualizerId];
+  }).reduce((ass, {
+    contextualization,
+    contextualizer
+  }) => {
+    // const contextualization = contextualizations[id];
     return _objectSpread({}, ass, {
-      [id]: _objectSpread({}, contextualization, {
+      [contextualization.id]: _objectSpread({}, contextualization, {
         resource: resources[contextualization.sourceId],
         additionalSources: contextualization.additionalSources ? contextualization.additionalSources.map(resId => resources[resId]) : [],
         contextualizer,
-        type: contextualizer ? contextualizer.type : INLINE_ASSET
+        type: contextualizer ? contextualizer.type : resources[contextualization.sourceId] && resources[contextualization.sourceId].metadata.type
       })
     });
   }, {});
@@ -193,8 +112,20 @@ function buildCitations({
    *   ),
    */
   ]);
+  let citationComponents = {};
+
+  if (buildRepresentations && edition.data.citationLocale && edition.data.citationLocale.data) {
+    citationComponents = (0, _buildCitationRepresentations.default)({
+      locale: edition.data.citationLocale.data,
+      style: edition.data.citationStyle.data,
+      items: citationItems,
+      citations: citationData
+    });
+  }
+
   return {
     citationData,
-    citationItems
+    citationItems,
+    citationComponents
   };
 }

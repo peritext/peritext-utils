@@ -10,8 +10,8 @@ export default function getContextualizationsFromEdition (
   edition = {}
 ) {
   const {
-    contextualizations,
-    contextualizers,
+    contextualizations = {},
+    contextualizers = {},
   } = production;
 
   const { data = {} } = edition;

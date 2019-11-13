@@ -1,73 +1,6 @@
 import resourceToCslJSON from './resourceToCslJSON';
-import { constants } from 'peritext-schemas';
-import resourceHasContents from './resourceHasContents';
-const {
-  draftEntitiesNames: {
-
-    INLINE_ASSET
-  }
-} = constants;
-
-const getContextualizationsFromEdition = ( { production = {}, edition = {} } ) => {
-  const { contextualizations = {} } = production;
-  const { data = {} } = edition;
-  const { plan = {} } = data;
-  const { summary = [] } = plan;
-  const usedSectionsIds = summary.reduce( ( res, element ) => {
-        if ( element.type === 'sections' ) {
-          let newOnes = [];
-          if ( element.data && element.data.customSummary && element.data.customSummary.active ) {
-            newOnes = element.data.customSummary.summary.map( ( { resourceId } ) => ( {
-              resourceId,
-              containerId: element.id
-            } ) );
-          }
-          else {
-            newOnes = production.sectionsOrder.map( ( { resourceId } ) => ( {
-              resourceId,
-              containerId: element.id
-            } ) );
-          }
-          return [ ...res, ...newOnes ];
-        }
- else if ( element.type === 'resourceSections' ) {
-          let newOnes = [];
-          if ( element.data && element.data.customSummary && element.data.customSummary.active ) {
-            newOnes = element.data.customSummary.summary.map( ( { resourceId } ) => ( {
-              resourceId,
-              containerId: element.id
-            } ) );
-          }
-          else {
-            newOnes = Object.keys( production.resources )
-            .filter( ( resourceId ) => {
-              const resource = production.resources[resourceId];
-              return element.data.resourceTypes.includes( resource.metadata.type ) && resourceHasContents( resource );
-            } )
-            .map( ( resourceId ) => ( {
-              resourceId,
-              containerId: element.id
-            } ) );
-          }
-          return [ ...res, ...newOnes ];
-        }
-        return res;
-      }, [] );
-
-  const usedContextualizations = usedSectionsIds.reduce( ( res, section ) => {
-    const relatedContextualizationIds = Object.keys( contextualizations )
-      .filter( ( contextualizationId ) => {
-        return contextualizations[contextualizationId].targetId === section.resourceId;
-      } );
-
-    return relatedContextualizationIds.reduce( ( res2, contId ) => ( {
-      ...res2,
-      [contId]: contextualizations[contId]
-    } ), res );
-  }, {} );
-
-  return usedContextualizations;
-};
+import getContextualizationsFromEdition from './getContextualizationsFromEdition';
+import buildCitationRepresentations from './buildCitationRepresentations';
 
 /**
  * Builds component-consumable data to represent
@@ -75,7 +8,7 @@ const getContextualizationsFromEdition = ( { production = {}, edition = {} } ) =
  * @param {object} production - the production to process
  * @return {object} citationData - the citation data to input in the reference manager
  */
-export default function buildCitations ( { production, sectionId, edition } ) {
+export default function buildCitations ( { production, sectionId, edition }, buildRepresentations = false ) {
   const {
     contextualizations = {},
     contextualizers = {},
@@ -86,28 +19,27 @@ export default function buildCitations ( { production, sectionId, edition } ) {
    * Assets preparation
    */
   const actualContextualizations = edition ?
-    getContextualizationsFromEdition( { production, edition } )
+    getContextualizationsFromEdition( production, edition )
     : contextualizations;
-  const assets = Object.keys( actualContextualizations )
-  .filter( ( id ) => {
+  const assets = actualContextualizations
+  .filter( ( contextualization ) => {
     if ( sectionId ) {
-      return contextualizations[id].targetId === sectionId;
+      return contextualization.targetId === sectionId;
     }
     return true;
   } )
-  .reduce( ( ass, id ) => {
-    const contextualization = contextualizations[id];
-    const contextualizer = contextualizers[contextualization.contextualizerId];
+  .reduce( ( ass, { contextualization, contextualizer } ) => {
+    // const contextualization = contextualizations[id];
     return {
       ...ass,
-      [id]: {
+      [contextualization.id]: {
         ...contextualization,
         resource: resources[contextualization.sourceId],
         additionalSources: contextualization.additionalSources ?
           contextualization.additionalSources.map( ( resId ) => resources[resId] )
         : [],
         contextualizer,
-        type: contextualizer ? contextualizer.type : INLINE_ASSET
+        type: contextualizer ? contextualizer.type : resources[contextualization.sourceId] && resources[contextualization.sourceId].metadata.type
       }
     };
   }, {} );
@@ -191,8 +123,19 @@ export default function buildCitations ( { production, sectionId, edition } ) {
      *   ),
      */
   ] );
+  let citationComponents = {};
+  if ( buildRepresentations && edition.data.citationLocale && edition.data.citationLocale.data ) {
+    citationComponents = buildCitationRepresentations( {
+      locale: edition.data.citationLocale.data,
+      style: edition.data.citationStyle.data,
+
+      items: citationItems,
+      citations: citationData,
+    } );
+  }
   return {
     citationData,
-    citationItems
+    citationItems,
+    citationComponents,
   };
 }

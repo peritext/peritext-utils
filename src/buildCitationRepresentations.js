@@ -31,7 +31,6 @@ const buildCitationRepresentations = ( {
   };
 
   const processor = new CSL.Engine( sys, style );
-
   return citations.reduce( ( inputCitations, citationData ) => {
     const activeCitations = { ...inputCitations };
     const citation = citationData[0];

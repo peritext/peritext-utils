@@ -1,53 +1,65 @@
 import buildContextContent from './buildContextContent';
+import getContextualizationsFromEdition from './getContextualizationsFromEdition';
+import getContextualizationMentions from './getContextualizationMentions';
+import uniq from 'lodash/uniq';
 
-/**
- * Builds component-consumable data to represent
- * the glossary of "entities" resources being mentionned in the production
- * @param {object} production - the production to process
- * @return {array} glossaryMentions - all the glossary entries properly formatted for rendering
- */
-export default function buildGlossary(
+const buildGlossary = ( {
   production,
-) {
-    const {
-      contextualizations,
-      contextualizers,
-      resources
-    } = production;
-    let glossaryMentions = Object.keys( contextualizations )
-      .filter( ( contextualizationId ) => {
-        const contextualizerId = contextualizations[contextualizationId].contextualizerId;
-        const contextualizer = contextualizers[contextualizerId];
-        return contextualizer && contextualizer.type === 'glossary';
-      } )
-      .map( ( contextualizationId ) => ( {
-        ...contextualizations[contextualizationId],
-        contextualizer: contextualizers[contextualizations[contextualizationId].contextualizerId],
-        resource: resources[contextualizations[contextualizationId].sourceId],
+  edition,
+  options
+} ) => {
+  const {
+    resources
+  } = production;
+
+  const {
+      showUncited = false,
+      glossaryTypes = [ 'person', 'place', 'event', 'notion', 'other' ]
+    } = options;
+
+  // let items;
+  const usedContextualizations = getContextualizationsFromEdition( production, edition );
+  const citedResourcesIds = (
+    showUncited ?
+      Object.keys( resources )
+      .filter( ( resourceId ) => resources[resourceId].metadata.type === 'glossary' )
+      :
+      uniq( usedContextualizations.filter( ( c ) => resources[c.contextualization.sourceId].metadata.type === 'glossary' ).map( ( c ) => c.contextualization.sourceId ) )
+  )
+  .filter( ( resourceId ) => {
+    return glossaryTypes.includes( resources[resourceId].data.entryType );
+  } )
+  .sort( ( a, b ) => {
+    if ( resources[a].data.name.toLowerCase() > resources[b].data.name.toLowerCase() ) {
+      return 1;
+    }
+    else {
+      return -1;
+    }
+  } );
+
+  const items = citedResourcesIds.map( ( resourceId ) => {
+    const mentions = usedContextualizations.filter( ( c ) => c.contextualization.sourceId === resourceId )
+    .map( ( c ) => c.contextualization.id )
+    .map( ( contextualizationId ) => getContextualizationMentions( { contextualizationId, production, edition } ) )
+    .reduce( ( res2, contextualizationMentions ) => [
+      ...res2,
+      ...contextualizationMentions.map( ( { containerId, contextualizationId } ) => ( {
+        id: contextualizationId,
+        containerId,
         contextContent: buildContextContent( production, contextualizationId )
       } ) )
-      .reduce( ( entries, contextualization ) => {
-        return {
-          ...entries,
-          [contextualization.sourceId]: {
-            resource: contextualization.resource,
-            mentions: entries[contextualization.sourceId] ?
-                        entries[contextualization.sourceId].mentions.concat( contextualization )
-                        : [ contextualization ]
-          }
-        };
-      }, {} );
 
-    glossaryMentions = Object.keys( glossaryMentions )
-                        .map( ( id ) => glossaryMentions[id] )
-                        .sort( ( a, b ) => {
-                          if ( a.resource.metadata.title.toLowerCase() > b.resource.metadata.title.toLowerCase() ) {
-                            return 1;
-                          }
-                          else {
-                            return -1;
-                          }
-                        } );
+    ], [] );
+    return {
+      resourceId,
+      resource: production.resources[resourceId],
+      mentions
+    };
 
-    return glossaryMentions;
-  }
+  } );
+
+  return items;
+};
+
+export default buildGlossary;
