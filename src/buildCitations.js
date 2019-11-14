@@ -50,7 +50,7 @@ export default function buildCitations ( { production, sectionId, edition }, bui
   // isolate bib contextualizations
   const bibContextualizations = Object.keys( assets )
   .filter( ( assetKey ) =>
-      assets[assetKey].type === 'bib'
+      assets[assetKey].type === 'bib' && contextualizations[assetKey]
     )
   .map( ( assetKey ) => assets[assetKey] );
   // build bibliography items

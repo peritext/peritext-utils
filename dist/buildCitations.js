@@ -63,7 +63,7 @@ function buildCitations({
    */
   // isolate bib contextualizations
 
-  const bibContextualizations = Object.keys(assets).filter(assetKey => assets[assetKey].type === 'bib').map(assetKey => assets[assetKey]); // build bibliography items
+  const bibContextualizations = Object.keys(assets).filter(assetKey => assets[assetKey].type === 'bib' && contextualizations[assetKey]).map(assetKey => assets[assetKey]); // build bibliography items
 
   const citationItems = Object.keys(assets).filter(key => assets[key] && assets[key].resource && assets[key].resource.metadata.type !== 'glossary').reduce((finalCitations, key1) => {
     const asset = assets[key1];
