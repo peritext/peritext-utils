@@ -134,8 +134,11 @@ export default function buildCitations ( { production, sectionId, edition }, bui
     } );
   }
   return {
-    citationData,
-    citationItems,
+
+    /*
+     * citationData,
+     * citationItems,
+     */
     citationComponents,
   };
 }

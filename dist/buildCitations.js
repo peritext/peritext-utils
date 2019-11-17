@@ -124,8 +124,10 @@ function buildCitations({
   }
 
   return {
-    citationData,
-    citationItems,
+    /*
+     * citationData,
+     * citationItems,
+     */
     citationComponents
   };
 }
