@@ -37,7 +37,14 @@ function buildCitations({
    * Assets preparation
    */
 
-  const actualContextualizations = edition ? (0, _getContextualizationsFromEdition.default)(production, edition) : contextualizations;
+  const actualContextualizations = edition ? (0, _getContextualizationsFromEdition.default)(production, edition) : Object.keys(contextualizations).map(contextualizationId => {
+    const contextualization = contextualizations[contextualizationId];
+    const contextualizer = production.contextualizers[contextualization.contextualizerId];
+    return {
+      contextualizer,
+      contextualization
+    };
+  });
   const assets = actualContextualizations.filter(contextualization => {
     if (sectionId) {
       return contextualization.targetId === sectionId;

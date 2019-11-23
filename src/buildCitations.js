@@ -20,7 +20,15 @@ export default function buildCitations ( { production, sectionId, edition }, bui
    */
   const actualContextualizations = edition ?
     getContextualizationsFromEdition( production, edition )
-    : contextualizations;
+    : Object.keys( contextualizations )
+    .map( ( contextualizationId ) => {
+      const contextualization = contextualizations[contextualizationId];
+      const contextualizer = production.contextualizers[contextualization.contextualizerId];
+      return {
+        contextualizer,
+        contextualization
+      };
+    } );
   const assets = actualContextualizations
   .filter( ( contextualization ) => {
     if ( sectionId ) {
