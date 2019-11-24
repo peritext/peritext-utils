@@ -2,7 +2,6 @@ import buildContextContent from './buildContextContent';
 import resourceToCslJSON from './resourceToCslJSON';
 import getContextualizationsFromEdition from './getContextualizationsFromEdition';
 import getContextualizationMentions from './getContextualizationMentions';
-import buildCitations from './buildCitations';
 
 import uniq from 'lodash/uniq';
 import CSL from 'citeproc';
@@ -11,7 +10,12 @@ import CSL from 'citeproc';
  *
  * @param {*} param0
  */
-function processBibliography( { items, style, locale, options = {} } ) {
+function processBibliography( {
+  items = {},
+  style,
+  locale,
+  options = {}
+} ) {
   if ( !style || !locale ) {
     return;
   }
@@ -58,8 +62,7 @@ function processBibliography( { items, style, locale, options = {} } ) {
  * Builds component-consumable data to represent
  * the citations of "bib" resources being mentionned in the production
  * @param {object} production - the production to process
- * @param {object} citations - the citation data
- * @return {object} items - reference items ready to be visualized
+ * @param {object} options
  */
 export default function buildBibliography ( {
   production,
@@ -138,11 +141,18 @@ export default function buildBibliography ( {
       }
     };
   }, {} );
-  const citations = buildCitations( { production, edition } );
+
+  const citationItems = Object.keys( resourcesMap ).reduce( ( total, key ) => {
+      const citation = resourcesMap[key].citation;
+      return {
+        ...total,
+        [citation.id]: citation
+      };
+    }, {} );
   const bibliographyData = processBibliography( {
     locale: edition.data.citationLocale.data,
     style: edition.data.citationStyle.data,
-    items: citations.citationItems
+    items: citationItems
   } );
 
   const ids = bibliographyData[0].entry_ids.map( ( group ) => group[0] );

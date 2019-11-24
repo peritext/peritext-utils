@@ -13,8 +13,6 @@ var _getContextualizationsFromEdition = _interopRequireDefault(require("./getCon
 
 var _getContextualizationMentions = _interopRequireDefault(require("./getContextualizationMentions"));
 
-var _buildCitations = _interopRequireDefault(require("./buildCitations"));
-
 var _uniq = _interopRequireDefault(require("lodash/uniq"));
 
 var _citeproc = _interopRequireDefault(require("citeproc"));
@@ -30,7 +28,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @param {*} param0
  */
 function processBibliography({
-  items,
+  items = {},
   style,
   locale,
   options = {}
@@ -65,8 +63,7 @@ function processBibliography({
  * Builds component-consumable data to represent
  * the citations of "bib" resources being mentionned in the production
  * @param {object} production - the production to process
- * @param {object} citations - the citation data
- * @return {object} items - reference items ready to be visualized
+ * @param {object} options
  */
 
 
@@ -133,14 +130,16 @@ function buildBibliography({
       })
     });
   }, {});
-  const citations = (0, _buildCitations.default)({
-    production,
-    edition
-  });
+  const citationItems = Object.keys(resourcesMap).reduce((total, key) => {
+    const citation = resourcesMap[key].citation;
+    return _objectSpread({}, total, {
+      [citation.id]: citation
+    });
+  }, {});
   const bibliographyData = processBibliography({
     locale: edition.data.citationLocale.data,
     style: edition.data.citationStyle.data,
-    items: citations.citationItems
+    items: citationItems
   });
   const ids = bibliographyData[0].entry_ids.map(group => group[0]);
   let items = ids.map((id, index) => ({
