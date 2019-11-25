@@ -29,7 +29,7 @@ const buildResourceSectionsSummary = ( { production, options } ) => {
     .sort( defaultSortResourceSections );
 
     summary = [ ...base, ...summary ]
-    .filter( ( resourceId ) => {
+    .filter( ( { resourceId } ) => {
       if ( hideEmptyResources ) {
         return resourceHasContents( production.resources[resourceId] );
       }
