@@ -29,7 +29,18 @@ const buildResourceSectionsSummary = ({
     let base = [];
 
     if (resourceTypes && resourceTypes.includes('section')) {
-      base = [...production.sectionsOrder];
+      base = [...production.sectionsOrder].filter(({
+        resourceId
+      }) => {
+        const resource = production.resources[resourceId];
+
+        if (tags && tags.length) {
+          const resourceTags = resource.metadata && resource.metadata.tags || [];
+          return resourceTags.find(resourceTag => tags.includes(resourceTag)) !== undefined;
+        }
+
+        return true;
+      });
     }
 
     summary = Object.keys(production.resources) // filtering resource types
