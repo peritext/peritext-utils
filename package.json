@@ -38,7 +38,7 @@
     "lodash": "^4.17",
     "react": "^16.7.0-alpha",
     "react-dom": "^16.7.0-alpha",
-    "peritext-schemas": "^0.2.0"
+    "peritext-schemas": "^0.2.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
