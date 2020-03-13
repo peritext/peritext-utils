@@ -1,7 +1,7 @@
 import defaultSortResourceSections from './defaultSortResourceSections';
 import resourceHasContents from './resourceHasContents';
 
-const buildResourceSectionsSummary = ( { production, options } ) => {
+const buildResourceSectionsSummary = ( { production, options = {} } ) => {
 
   const {
     customSummary,
