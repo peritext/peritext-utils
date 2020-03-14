@@ -25,12 +25,21 @@ const buildGlossary = ({
   } = production;
   const {
     showUncited = false,
-    glossaryTypes = ['person', 'place', 'event', 'notion', 'other']
+    glossaryTypes = ['person', 'place', 'event', 'notion', 'other'],
+    tags
   } = options; // let items;
 
   const usedContextualizations = (0, _getContextualizationsFromEdition.default)(production, edition);
   const citedResourcesIds = (showUncited ? Object.keys(resources).filter(resourceId => resources[resourceId].metadata.type === 'glossary') : (0, _uniq.default)(usedContextualizations.filter(c => resources[c.contextualization.sourceId].metadata.type === 'glossary').map(c => c.contextualization.sourceId))).filter(resourceId => {
     return glossaryTypes.includes(resources[resourceId].data.entryType);
+  }).filter(resourceId => {
+    if (tags && tags.length) {
+      const resource = resources[resourceId];
+      const resourceTags = resource.metadata && resource.metadata.tags || [];
+      return resourceTags.find(resourceTag => tags.includes(resourceTag)) !== undefined;
+    }
+
+    return true;
   }).sort((a, b) => {
     if (resources[a].data.name.toLowerCase() > resources[b].data.name.toLowerCase()) {
       return 1;
