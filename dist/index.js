@@ -123,6 +123,12 @@ Object.defineProperty(exports, "abbrevString", {
     return _abbrevString.default;
   }
 });
+Object.defineProperty(exports, "resolveEditionCss", {
+  enumerable: true,
+  get: function () {
+    return _resolveEditionCss.default;
+  }
+});
 Object.defineProperty(exports, "generateOpenUrl", {
   enumerable: true,
   get: function () {
@@ -173,6 +179,8 @@ var _loadAssetsForEdition = _interopRequireDefault(require("./loadAssetsForEditi
 var _buildHTMLMetadata = _interopRequireDefault(require("./buildHTMLMetadata"));
 
 var _abbrevString = _interopRequireDefault(require("./abbrevString"));
+
+var _resolveEditionCss = _interopRequireDefault(require("./resolveEditionCss"));
 
 var _microDataUtils = require("./microDataUtils");
 

@@ -21,6 +21,7 @@ export { default as getContextualizationsFromEdition } from './getContextualizat
 export { default as loadAssetsForEdition } from './loadAssetsForEdition';
 export { default as buildHTMLMetadata } from './buildHTMLMetadata';
 export { default as abbrevString } from './abbrevString';
+export { default as resolveEditionCss } from './resolveEditionCss';
 export {
   generateOpenUrl,
   bibToSchema,
