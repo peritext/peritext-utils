@@ -11,10 +11,14 @@ var _objectPath = _interopRequireDefault(require("object-path"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const getResourceTitle = resource => {
-  const titlePath = _objectPath.default.get(_resource.default, ['definitions', resource.metadata.type, 'titlePath']);
+const getResourceTitle = (resource = {}) => {
+  const {
+    metadata = {}
+  } = resource;
 
-  const title = titlePath ? _objectPath.default.get(resource, titlePath) : resource.metadata.title;
+  const titlePath = _objectPath.default.get(_resource.default, ['definitions', metadata.type, 'titlePath']);
+
+  const title = titlePath ? _objectPath.default.get(resource, titlePath) : metadata.title;
   return title || '';
 };
 

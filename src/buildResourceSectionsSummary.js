@@ -47,6 +47,7 @@ const buildResourceSectionsSummary = ( { production, options = {} } ) => {
     } )
     .map( ( resourceId ) => ( {
       resourceId,
+      resource: production.resources[resourceId],
       level: 0
     } ) )
     .sort( defaultSortResourceSections );

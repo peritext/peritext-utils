@@ -38,7 +38,7 @@ function processBibliography( {
             }</a>${
               postPunct}`;
       }
- else if ( params.variableNames[0] === 'URL' ) {
+      else if ( params.variableNames[0] === 'URL' ) {
         return `${prePunct
             }<a href="${
               str

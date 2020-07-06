@@ -64,6 +64,7 @@ const buildResourceSectionsSummary = ({
       return true;
     }).map(resourceId => ({
       resourceId,
+      resource: production.resources[resourceId],
       level: 0
     })).sort(_defaultSortResourceSections.default);
     summary = [...base, ...summary].filter(({
